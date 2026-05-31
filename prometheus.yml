@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'essaproxy'
+    static_configs:
+      - targets: ['essaproxy:9090']

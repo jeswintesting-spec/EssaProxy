@@ -1,0 +1,37 @@
+{
+  "title": "EssaProxy Telemetry",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total Requests",
+      "targets": [{"expr": "essaproxy_requests_total"}],
+      "gridPos": {"x": 0, "y": 0, "w": 8, "h": 6}
+    },
+    {
+      "type": "stat",
+      "title": "Cache Hits",
+      "targets": [{"expr": "essaproxy_cache_hits_total"}],
+      "gridPos": {"x": 8, "y": 0, "w": 8, "h": 6}
+    },
+    {
+      "type": "stat",
+      "title": "WAF Blocks",
+      "targets": [{"expr": "essaproxy_waf_blocks_total"}],
+      "gridPos": {"x": 16, "y": 0, "w": 8, "h": 6}
+    },
+    {
+      "type": "timeseries",
+      "title": "Active Connections",
+      "targets": [{"expr": "essaproxy_active_connections", "legendFormat": "{{backend}}"}],
+      "gridPos": {"x": 0, "y": 6, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Backend Health (1=Healthy, 0=Dead)",
+      "targets": [{"expr": "essaproxy_backend_healthy", "legendFormat": "{{backend}}"}],
+      "gridPos": {"x": 12, "y": 6, "w": 12, "h": 8}
+    }
+  ],
+  "schemaVersion": 36,
+  "refresh": "5s"
+}

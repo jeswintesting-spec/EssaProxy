@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  essaproxy:
+    build: .
+    ports:
+      - "8080:8080"  # HTTP proxy
+      - "8443:8443"  # HTTPS proxy
+      - "9090:9090"  # Prometheus Metrics Endpoint
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+      - redis
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  backend1:
+    build: .
+    command: python dummy_backend.py --port 9001
+    labels:
+      - "essaproxy.enable=true"
+      - "essaproxy.route=/api/v2"
+      - "essaproxy.port=9001"
+      - "essaproxy.weight=10"
+
+  backend2:
+    build: .
+    command: python dummy_backend.py --port 9002
+
+  backend3:
+    build: .
+    command: python dummy_backend.py --port 9003
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9091:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus

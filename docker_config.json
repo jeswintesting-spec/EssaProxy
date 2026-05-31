@@ -1,0 +1,66 @@
+{
+  "host": "0.0.0.0",
+  "port": 8080,
+  "algorithm": "weighted_round_robin",
+  "rate_limit_rate": 50.0,
+  "rate_limit_capacity": 200,
+  "health_check_interval": 5,
+  "health_check_timeout": 2,
+  "ssl_cert": "cert.pem",
+  "ssl_key": "key.pem",
+  "ssl_port": 8443,
+  "autossl_domain": "api.essaproxy.local",
+  "autossl_email": "admin@essaproxy.local",
+  "cache_ttl": 10,
+  "cache_max_size": 52428800,
+  "metrics_port": 9090,
+  "docker_discovery": true,
+  "blocked_ips": [],
+  "enable_dpi_waf": true,
+  "enable_honeypot": true,
+  "honeypot_backend": {"host": "honeypot", "port": 9999},
+  "enable_ws_backplane": true,
+  "enable_tracing": true,
+  "enable_dlp": true,
+  "enable_graphql_waf": true,
+  "graphql_max_depth": 5,
+  "enable_sse_multiplexer": true,
+  "enable_tarpit": true,
+  "enable_llm_filter": true,
+  "wasm_plugins_dir": "./wasm_plugins",
+  "jaeger_url": "http://jaeger:14268/api/traces",
+  "jwt_secret": "my-super-secret-key",
+  "mtls_ca_cert": "ca.pem",
+  "redis_url": "redis://redis:6379",
+  "protected_routes": [
+    "/admin",
+    "/api/secure"
+  ],
+  "shadow_routes": {
+    "/api/v1": {
+      "backend": {"host": "dark_backend", "port": 9005},
+      "percent": 0.1
+    }
+  },
+  "geo_rate_limits": {
+    "US": {"rate": 50.0, "capacity": 200},
+    "CN": {"rate": 2.0, "capacity": 5}
+  },
+  "chaos": {
+    "enabled": true,
+    "fault_percent": 0.1,
+    "latency_ms": 200,
+    "drop_percent": 0.05,
+    "error_percent": 0.05
+  },
+  "plugins_dir": "plugins",
+  "routes": {
+    "/api": [
+      {"host": "backend1", "port": 9001, "weight": 5, "country": "US"},
+      {"host": "backend2", "port": 9002, "weight": 1, "country": "EU"}
+    ],
+    "/": [
+      {"host": "backend3", "port": 9003, "weight": 1}
+    ]
+  }
+}

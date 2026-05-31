@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EssaControl</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --danger: #ef4444;
+            --success: #10b981;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .panel h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background-color: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 0.375rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-healthy {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-dead {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        input {
+            background-color: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #2563eb;
+        }
+
+        button.danger {
+            background-color: var(--danger);
+        }
+
+        button.danger:hover {
+            background-color: #dc2626;
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ EssaControl <span style="font-size: 0.875rem; color: var(--text-muted); font-weight: normal; margin-left: 1rem;">Layer 7 Management Interface</span></h1>
+            <div id="connection-status" class="status-badge status-healthy">Connected</div>
+        </header>
+
+        <div class="grid">
+            <div class="panel">
+                <h2>Live Metrics</h2>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="val-requests">0</div>
+                        <div class="stat-label">Total Requests</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="val-waf">0</div>
+                        <div class="stat-label">WAF Blocks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="val-drops">0</div>
+                        <div class="stat-label">Rate Limit Drops</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="val-cache">0</div>
+                        <div class="stat-label">Cache Hits</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>IP Blocklist (WAF)</h2>
+                <div class="flex-row" style="margin-bottom: 1rem;">
+                    <input type="text" id="ip-input" placeholder="Enter IP address to block (e.g. 192.168.1.5)">
+                    <button onclick="blockIp()">Block</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>IP Address</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="blocklist-table">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Backend Routing Pool</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Route</th>
+                            <th>Host:Port</th>
+                            <th>Status</th>
+                            <th>Active Conns</th>
+                            <th>Weight</th>
+                            <th>Country</th>
+                        </tr>
+                    </thead>
+                    <tbody id="backends-table">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Base URL - assumes running on same host, but via the admin endpoints
+        const API_BASE = '/admin/api';
+
+        async function fetchState() {
+            try {
+                const response = await fetch(`${API_BASE}/state`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                
+                document.getElementById('connection-status').className = 'status-badge status-healthy';
+                document.getElementById('connection-status').innerText = 'Connected';
+                
+                updateMetrics(data.metrics);
+                updateBackends(data.routes);
+                updateBlocklist(data.config.blocked_ips);
+            } catch (error) {
+                console.error('Failed to fetch state:', error);
+                document.getElementById('connection-status').className = 'status-badge status-dead';
+                document.getElementById('connection-status').innerText = 'Disconnected';
+            }
+        }
+
+        function updateMetrics(metrics) {
+            document.getElementById('val-requests').innerText = metrics.requests_total;
+            document.getElementById('val-waf').innerText = metrics.waf_blocks_total;
+            document.getElementById('val-drops').innerText = metrics.rate_limit_drops_total;
+            document.getElementById('val-cache').innerText = metrics.cache_hits_total;
+        }
+
+        function updateBackends(routes) {
+            const tbody = document.getElementById('backends-table');
+            tbody.innerHTML = '';
+
+            for (const [route, backends] of Object.entries(routes)) {
+                backends.forEach(b => {
+                    const statusClass = b.healthy ? 'status-healthy' : 'status-dead';
+                    const statusText = b.healthy ? 'Healthy' : 'Dead';
+                    
+                    const row = `
+                        <tr>
+                            <td><code>${route}</code></td>
+                            <td>${b.host}:${b.port}</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                            <td>${b.active_connections}</td>
+                            <td>${b.weight}</td>
+                            <td>${b.country || 'Any'}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            }
+        }
+
+        function updateBlocklist(ips) {
+            const tbody = document.getElementById('blocklist-table');
+            tbody.innerHTML = '';
+            
+            ips.forEach(ip => {
+                const row = `
+                    <tr>
+                        <td><code>${ip}</code></td>
+                        <td><button class="danger" onclick="unblockIp('${ip}')">Unblock</button></td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        async function blockIp() {
+            const ip = document.getElementById('ip-input').value.trim();
+            if (!ip) return;
+            
+            try {
+                await fetch(`${API_BASE}/block`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ip: ip})
+                });
+                document.getElementById('ip-input').value = '';
+                fetchState(); // Refresh
+            } catch (error) {
+                alert('Failed to block IP');
+            }
+        }
+
+        async function unblockIp(ip) {
+            try {
+                await fetch(`${API_BASE}/unblock`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ip: ip})
+                });
+                fetchState(); // Refresh
+            } catch (error) {
+                alert('Failed to unblock IP');
+            }
+        }
+
+        // Poll every 2 seconds
+        fetchState();
+        setInterval(fetchState, 2000);
+    </script>
+</body>
+</html>
