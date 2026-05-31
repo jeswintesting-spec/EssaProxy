@@ -43,7 +43,7 @@ class EssaProxy:
             except ImportError:
                 logger.warning("redis library not installed. Distributed state disabled.")
                 
-        self.load_balancer = create_load_balancer(config)
+
         self.rate_limiter = TokenBucketRateLimiter(
             config.rate_limit_capacity, config.rate_limit_rate, self.redis_client, config.geo_rate_limits
         )

@@ -35,7 +35,7 @@ class AdminServer:
             response = (
                 b"HTTP/1.1 200 OK\r\n"
                 b"Content-Type: text/html; charset=utf-8\r\n"
-                f"Content-Length: {len(content)}\r\n".encode() +
+                + f"Content-Length: {len(content)}\r\n".encode() +
                 b"Connection: close\r\n\r\n" +
                 content
             )
@@ -76,7 +76,7 @@ class AdminServer:
         response = (
             b"HTTP/1.1 200 OK\r\n"
             b"Content-Type: application/json\r\n"
-            f"Content-Length: {len(body)}\r\n".encode() +
+            + f"Content-Length: {len(body)}\r\n".encode() +
             b"Connection: close\r\n\r\n" +
             body
         )

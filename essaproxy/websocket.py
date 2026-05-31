@@ -50,7 +50,7 @@ class WebSocketBackplane:
             b"HTTP/1.1 101 Switching Protocols\r\n"
             b"Upgrade: websocket\r\n"
             b"Connection: Upgrade\r\n"
-            f"Sec-WebSocket-Accept: {accept_key}\r\n\r\n".encode()
+            + f"Sec-WebSocket-Accept: {accept_key}\r\n\r\n".encode()
         )
         writer.write(response)
         await writer.drain()

@@ -85,7 +85,7 @@ class MetricsServer:
                     b"HTTP/1.1 200 OK\r\n"
                     b"Content-Type: text/plain; version=0.0.4\r\n"
                     b"Connection: close\r\n"
-                    f"Content-Length: {len(metrics_data)}\r\n"
+                    + f"Content-Length: {len(metrics_data)}\r\n".encode('utf-8') +
                     b"\r\n"
                 ) + metrics_data.encode('utf-8')
             else:
